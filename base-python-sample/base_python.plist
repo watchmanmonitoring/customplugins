@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PluginName</key>
+	<string>Base Plugin Structure</string>
+	<key>PluginOptions</key>
+	<array>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>.</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/PLUGIN_TITLE.plist</string>
+			<key>SettingTitle</key>
+			<string>SETTING TITLE</string>
+			<key>SettingTitleHint</key>
+			<string>DEFAULT HINT</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>DisplayOnly</string>
+				<key>Value</key>
+				<string></string>
+			</dict>
+		</dict>
+	</array>
+	<key>PluginVersion</key>
+	<string>1.0</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Library/MonitoringClient/Plugins/base_python.plugin</string>
+	</array>
+</dict>
+</plist>

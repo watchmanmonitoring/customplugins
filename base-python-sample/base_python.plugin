@@ -1,0 +1,102 @@
+#! /usr/bin/env python
+
+######################################## Monitoring Client ########################################
+#
+#   (c) 2010-2011            WMInc. All rights reserved.
+#
+#   Details available at     www.monitoringclient.com
+#
+###################################################################################################
+
+### Import needed modules.
+###
+### If you are familiar enough with Python to create a plugin, you should already
+### know what to do here.
+###
+### Here, I am just going to import some modules that are most often needed by
+### 
+plugins.
+import os, sys							# Pretty much always used
+from subprocess import Popen, PIPE		# Used to pass commands to the system
+import plistlib							# Needed to get/set values from/to a plist
+
+###################################  Creating a Settings File  #################################
+### We're going to go ahead and set some variables that are used throughout the pugin
+
+# Client Settings
+client_settings_Plist = "/Library/MonitoringClient/ClientSettings.plist"
+
+# Plugin-specific settings
+settings_Plist = "/Library/MonitoringClient/PluginSupport/base_python_settings.plist"
+
+# System Profiler export
+sys_info_Plist = "/Library/MonitoringClient/ClientData/LocalInfo/sys_info.plist"
+
+
+###################################  Creating a Settings File  #################################
+### If your plugin needs to hold information of any kind, you can use a settings plist
+### in ./PluginSupport.  If you do not need any user-defined settings, or need the plugin to
+### hold any data (such as a timestamp, etc), you can safely delete this entire section.
+
+def check_settings():
+	### If there is no settings plist, we need to make one.
+	if not os.path.isfile(settings_plist): plistlib.writePlist({}, settings_Plist)
+
+	### Now we read the settings plist.
+	settings = plistlib.readPlist(settings_Plist)
+
+	### Next, we create the settings keys, and make the plist self-healing
+	changed = False							# Set a variable to see if anything changed
+
+	if 'Some_Setting' not in settings:		# If the setting we need is not in the settings ...
+		settings['Some_Setting'] = 'Default Value'	# Create it and set a default value
+		changed = True								# Let the plugin know we changed something
+
+	### If we changed anything, we need to write the new plist
+	if changed: plistlib.writePlist(settings, settings_plist)
+
+
+####################################    Main Work Area   ###########################################
+### Main Plugin
+### This is where the work is done
+###
+### An effective plugin needs to perform 3 Major tasks:
+###		1) Do some work!
+###		2) Print some output.
+###		3) Exit with an appropriate status
+###
+###	The Monitoring Client reads the output of the plugin, and reports it back to a server
+### along with the exit status.  The exit status lets the server know the severity of
+### any issues this plugin found.
+###
+### Exit Statuses:
+###		0 = We're All Good = Information will be displayed at the server, but not emailed.
+###		2 = Big Problem! = This information will be displayed on the server, and trigger an email.
+###		20 = Information worth reporting was found, but no email should be sent.
+###		25 = Nothing to see here = Information will not be sent to the server (and not emailed)
+###
+### It's also noteworthy that the plugin needs to be executable by root in order to
+### function properly, so it may be necessary to chmod 744 the plugin.
+
+if __name__ == '__main__':
+	##### Do Some Work Here #####
+
+		# The plugin may need some settings that are client-wide,
+		#	such as machine uptime or default settings
+	client_settings = plistlib.readPlist(client_settings_Plist)
+
+		# If the plugin needs to save some settings or information, 
+		#	we make sure we have somewere to do so
+	settings = check_settings()
+
+		# The Client exports information from System Profiler that makes it easy
+		#	for Plugins to get information regarding hardware, software, and diagnostics.
+		# If you would like to access this information, load the sys_info.plist
+	sys_info = plistlib.readPlist(sys_info_Plist)
+
+		# The client reads the output of the plugin, so we need to print something
+	output = "Base Python Plugin Output!"
+	print(output)
+	
+		# We don't really do anything in this plugin, so we're just going to exit with a 25 status.
+	sys.exit(25)
