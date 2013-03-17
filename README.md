@@ -1,24 +1,26 @@
 Custom Plugins
-==============
+--------------
 
 A repository for customer built plugins, based off the included template
 
-# Base Plugin
 
-Here we have provided a basic example of plugin architecture.
-
-# Plugin Operation
+Overview of a Plugin's Operation
+--------------
 
 An effective plugin needs to perform 3 Major tasks:
 * Do some work!
 * Print some output.
 * Exit with an appropriate status
 
-The Monitoring Client reads the output of the plugin, and reports it back to a server along with the exit status.  The exit status lets the server know the severity of any issues this plugin found.
+On each run of the monitoring client, the plugins folder is enumerated, and each plugin with a valid plist is run.
 
-The name of your plugin must begin with an underscore _ 
+The Monitoring Client reads the output (stdout) of each plugin, and includes this text, as well as the exit status, to the Watchman Monitoring server.
 
-# Exit Statuses
+The plugin's architect uses the exit status to the server know the severity of the report.
+
+
+Exit Statuses and the Watchman Monitoring server 
+--------------
 
 The server will act according to how a plugin reports and exits.  The following exit statuses are used:
 
@@ -32,11 +34,14 @@ _A future version of the server will gather & display messages sent with status 
 _If a plugin's exit status is 1, the warning will be reported to the Watchman Monitoring staff, for inspection of the plugin's failure._
 
 
+The name of your plugin must begin with an underscore _ 
+
 A private repository is available as well.
 https://github.com/watchmanmonitoring/subscriberplugins
 
 
-# Preference Pane Options
+Preference Pane Options
+--------------
 
 Each plugin has the ability to provide options to be displayed in the Preference Pane.
 
@@ -87,11 +92,13 @@ Negative = checked = False, & set to true if not present (Positive is assumed)|b
 This will be used only to display the SettingTitle and/or Setting Hint|Empty|
 
 
-# PreferencePane visibility
+PreferencePane visibility
+--------------
 
 There are some cases when a Plugin, or it's PreferencePane options, are needed, but not until certain requirements are met.
 
-# Disabling a Plugin
+Disabling a Plugin
+--------------
 
 A plugin will be fully disabled when it's file name is added to 
 
@@ -100,7 +107,8 @@ A plugin will be fully disabled when it's file name is added to
 as an entry in the array _PluginsDisabled_
 
 
-# Disabling the Plugin's display option
+Disabling the Plugin's display option
+--------------
 
 We support a boolean key titled _PrefPaneVisibility_ in any given plugin's _settings.plist file.
 
