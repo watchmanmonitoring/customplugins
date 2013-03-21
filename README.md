@@ -3,6 +3,10 @@ Custom Plugins
 
 A repository for customer built plugins, based off the included template
 
+Non-Developers are welcome to start a new plugin by creating a folder for it, and laying out a readme file with the goals.
+
+Our development team will be glad to step in and start making the plugin a reality.
+
 
 Overview of a Plugin's Operation
 --------------
