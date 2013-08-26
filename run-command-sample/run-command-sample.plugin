@@ -1,0 +1,68 @@
+#! /usr/bin/env python
+
+######################################################################################
+# Often times, we can rely on installed tools and services to provide the status
+#	of an application.
+# This sample plugin will lay out a basic method to ask a command for information
+#	Please refer to the basic-python-sample for information on plugin requirements.
+
+# Standard imports
+import os, sys
+import plistlib
+import signal, time, datetime
+from subprocess import Popen, PIPE
+
+#############################################################################################
+#### Plugin Functions
+
+### Function to handle command timeouts
+#
+# Sometimes commands can hang.  That's not good.  So, it's always a good idea
+#	to include a way to be able to time out on a command call.
+#
+# This function will attempt to run a command, and give up on it after a given
+#	amount of time.  It will return the command's output, any error output from it,
+#	and the exit status of the command
+def run_cmd(cmd, timeout):
+	start = datetime.datetime.now()
+	proc = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+	while proc.poll() is None:
+		time.sleep(0.1)
+		now = datetime.datetime.now()
+		if (now - start).seconds > timeout:
+			os.kill(proc.pid, signal.SIGKILL)
+			os.waitpid(-1, os.WNOHANG)
+			out = 'The command %s did not respond after %s seconds, and was terminated' % (
+				cmd,
+				str(timeout)
+			)
+			return out, '', 2
+
+	out, err = proc.communicate()
+	es = proc.wait()
+	return out, err, es
+
+
+#############################################################################################
+#### Do the Work
+
+if __name__ == '__main__':
+
+	# Specify the command you want to run
+	cmd = 'ls -la'
+
+	# How many seconds do you want to give it to complete?
+	timeout = 20
+
+	# Run the command.
+	#	You will get back 3 values - stdout, stderr, and the exit status from the command
+	out, err, es = run_cmd( cmd, timeout )
+
+	# Now, you can do whatever you want to the output received from the command
+	#	Look for keywords, check an app status, see if a program is active, etc
+	#
+	# For this sample, though, we're just going to pass along everything we received, just as
+	#	though the client called the command like it was the plugin itself
+	if out: print(out)
+	if err: print(err)
+	sys.exit(es)
