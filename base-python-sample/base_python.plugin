@@ -1,102 +1,108 @@
 #! /usr/bin/env python
 
-######################################## Monitoring Client ########################################
+################################################################################################
 #
-#   (c) 2010-2011            WMInc. All rights reserved.
+# This sample will try to outline what's generally needed for a plugin, and how the client
+#	expects a plugin to respond.
 #
-#   Details available at     www.monitoringclient.com
-#
-###################################################################################################
+# For more detailed examples and specific purpose plugins (log scanning, command status, etc)
+#	please refer to another sample, or ask us to make one!
 
-### Import needed modules.
-###
-### If you are familiar enough with Python to create a plugin, you should already
-### know what to do here.
-###
-### Here, I am just going to import some modules that are most often needed by
-### 
-plugins.
-import os, sys							# Pretty much always used
-from subprocess import Popen, PIPE		# Used to pass commands to the system
-import plistlib							# Needed to get/set values from/to a plist
+# Import needed modules.
+#
+# If you are familiar enough with Python to create a plugin, you should already
+#	know what to do here.
+import os, sys
+import plistlib
+
 
 ###################################  Creating a Settings File  #################################
-### We're going to go ahead and set some variables that are used throughout the pugin
-
-# Client Settings
-client_settings_Plist = "/Library/MonitoringClient/ClientSettings.plist"
+# We're going to go ahead and set some variables that are used throughout the pugin
 
 # Plugin-specific settings
-settings_Plist = "/Library/MonitoringClient/PluginSupport/base_python_settings.plist"
-
-# System Profiler export
-sys_info_Plist = "/Library/MonitoringClient/ClientData/LocalInfo/sys_info.plist"
+settings_plist = "/Library/MonitoringClient/PluginSupport/base_python_settings.plist"
 
 
 ###################################  Creating a Settings File  #################################
-### If your plugin needs to hold information of any kind, you can use a settings plist
-### in ./PluginSupport.  If you do not need any user-defined settings, or need the plugin to
-### hold any data (such as a timestamp, etc), you can safely delete this entire section.
+# If your plugin needs to hold information of any kind, you can use a settings plist
+#	in ./PluginSupport.  If you do not need any user-defined settings, or need the plugin to
+#	hold any data (such as a timestamp, etc), you can safely delete this entire section.
 
 def check_settings():
-	### If there is no settings plist, we need to make one.
-	if not os.path.isfile(settings_plist): plistlib.writePlist({}, settings_Plist)
 
-	### Now we read the settings plist.
-	settings = plistlib.readPlist(settings_Plist)
+	# If there is no settings plist, we need to make one.
+	if not os.path.isfile(settings_plist): plistlib.writePlist({}, settings_plist)
 
-	### Next, we create the settings keys, and make the plist self-healing
-	changed = False							# Set a variable to see if anything changed
+	# Now we try read the settings plist, and reset it if we can't
+	try: settings = plistlib.readPlist(settings_plist)
+	except: settings = {}
 
-	if 'Some_Setting' not in settings:		# If the setting we need is not in the settings ...
-		settings['Some_Setting'] = 'Default Value'	# Create it and set a default value
-		changed = True								# Let the plugin know we changed something
+	# Next, we create the settings keys, and make the plist self-healing
+	#	Set a variable to see if anything's changed, so we know if we need
+	#	to write any differences
+	changed = False
 
-	### If we changed anything, we need to write the new plist
+	# If our desired option or record doesn't exist, create it with a default value
+	#
+	# This default value can be anything to specify that this is the first plugin run,
+	#	or a zeroed counter, a default log path, or anything that helps make the plugin
+	#	not break.
+	if 'Some_Setting' not in settings:
+		settings['Some_Setting'] = 'Default Value'
+		changed = True
+
+	# If we changed anything, we need to write the new plist
 	if changed: plistlib.writePlist(settings, settings_plist)
 
 
 ####################################    Main Work Area   ###########################################
-### Main Plugin
-### This is where the work is done
-###
-### An effective plugin needs to perform 3 Major tasks:
-###		1) Do some work!
-###		2) Print some output.
-###		3) Exit with an appropriate status
-###
-###	The Monitoring Client reads the output of the plugin, and reports it back to a server
-### along with the exit status.  The exit status lets the server know the severity of
-### any issues this plugin found.
-###
-### Exit Statuses:
-###		0 = We're All Good = Information will be displayed at the server, but not emailed.
-###		2 = Big Problem! = This information will be displayed on the server, and trigger an email.
-###		20 = Information worth reporting was found, but no email should be sent.
-###		25 = Nothing to see here = Information will not be sent to the server (and not emailed)
-###
-### It's also noteworthy that the plugin needs to be executable by root in order to
-### function properly, so it may be necessary to chmod 744 the plugin.
+# Main Plugin
+# This is where the work is done
+#
+# An effective plugin needs to perform 3 Major tasks:
+#		1) Do some work!
+#		2) Print some output.
+#		3) Exit with an appropriate status
+#
+#	The Monitoring Client reads the output of the plugin, and reports it back to a server
+# along with the exit status.  The exit status lets the server know the severity of
+# any issues this plugin found.
+#
+# Exit Statuses:
+#		0 = We're All Good = Information will be displayed at the server, but not emailed.
+#		1 = Fail! = This is reserved for scripts failures, such as code bugs or python errors
+#		2 = Big Problem! = This information will be displayed on the server, and trigger an email.
+#		20 = Information worth reporting was found, but no email should be sent.
+#		25 = Nothing to see here = Information will not be sent to the server (and not emailed)
+#
+# It's also noteworthy that the plugin needs to be executable by root in order to
+# function properly, so it may be necessary to chmod 744 the plugin.
+#
+# Plugin output is also trimmed down to 16kb
+#	If the client receives information from a plugin that exceeds this size, a message is sent
+#	in place of the output that will notify that this happened
 
 if __name__ == '__main__':
-	##### Do Some Work Here #####
 
-		# The plugin may need some settings that are client-wide,
-		#	such as machine uptime or default settings
-	client_settings = plistlib.readPlist(client_settings_Plist)
+	# It's usually a good idea to go ahead and set an output and exit variable,
+	#	so that they can be added to and/or changed later on easily
+	output = ''
+	e = 0
 
-		# If the plugin needs to save some settings or information, 
-		#	we make sure we have somewere to do so
-	settings = check_settings()
+	# The plugin may need some settings that are client-wide,
+	#	such as machine uptime or default settings
+	client_settings = plistlib.readPlist(client_settings_plist)
 
-		# The Client exports information from System Profiler that makes it easy
-		#	for Plugins to get information regarding hardware, software, and diagnostics.
-		# If you would like to access this information, load the sys_info.plist
-	sys_info = plistlib.readPlist(sys_info_Plist)
+	# This is where a lot of work would go ...
+	#
+	#	read
+	#	scan
+	#	... coffee break ...
+	#	check
+	#	command
 
-		# The client reads the output of the plugin, so we need to print something
-	output = "Base Python Plugin Output!"
+	# We don't really do anything in this plugin, so we're just going to add something
+	#	to the output to print out, and exit with our initialized exit status
+	output += "Base Python Plugin Output!"
 	print(output)
-	
-		# We don't really do anything in this plugin, so we're just going to exit with a 25 status.
-	sys.exit(25)
+	sys.exit(e)
