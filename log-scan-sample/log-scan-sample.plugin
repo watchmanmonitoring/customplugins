@@ -1,0 +1,136 @@
+#! /usr/bin/env python
+
+######################################################################################
+# Log scanning is one of the most common ways to check up on a program
+# This sample plugin will lay out a basic method to check a log for reported errors
+#	Please refer to the basic-python-sample for information on plugin requirements.
+#
+# You will need to specify some basic information, such as the path to the log and
+#	and a list of bad words to look for inside the log.
+
+# Standard imports
+import os, sys
+import plistlib
+
+# You will need a settings plist to keep track of where you left off in the log
+settings_plist = '/Library/MonitoringClient/PluginSupport/log-scan-sample_settings.plist'
+
+# Specify the path to the log
+log_file = '/path/to/App.log'
+
+# A list of bad words
+#	This can be provided via plist (NOT the _settings.plist, it will not get updated),
+#	but for simplicity we're just going to make a list here in the plugin.
+error_text = [
+	'ERROR',
+	'FATAL'
+]
+
+#############################################################################################
+#### Plugin Functions
+
+### Check for a valid settings file
+def check_settings():
+	if not os.path.isfile(settings_plist): plistlib.writePlist( {}, settings_plist)
+	try: settings = plistlib.readPlist(settings_plist)
+	except: settings = {}
+
+	# This section checks for desired keys
+	changed = False
+
+	# We want to keep track of where we are in the log, so we don't read the entire thing
+	#	every time
+	if 'Log_Length' not in settings:
+		settings['Log_Length'] = 0
+		changed = True
+
+	# Only need to write the Plist if we changed anything
+	if changed: plistlib.writePlist(self.settings, self.settings_plist)
+	return settings
+
+### Read the log and return the data and new size
+def read_log(size):
+
+	# We want to know the current size of the log
+	#	Sometimes getsize() returns a Long.  This is bad for plists, so make it an int
+	log_size = int( os.path.getsize(log_file) )
+
+	# Check the log's current size against our records.
+
+	# If we haven't run yet (our records say 0 size), then just update it to the current
+	# size.  We typically only care about new/recurring errors, we don't want to go read
+	# the entire history
+	if ( size == 0 ): size = log_size
+
+	# If the new size is smaller, then the log may have gotten cleared or rolled since the
+	# last run, so now we start from the beginning
+	if ( size > log_size ): size = 0
+
+	# Now we open up the log file, seek to where we left off, and read the rest.
+	FILE = open(log_file, 'r')
+	FILE.seek(size)
+	data = FILE.read()
+	FILE.close()
+
+	# Return the log data, and new log size
+	return data, log_size
+
+### Scan the log for errors
+def scan_log(data):
+
+	# Make a list to hold any problems we find
+	errors = []
+
+	# There are many ways to search through this and look for nasty messages
+	#
+	# To keep things simple for the sake of this example, we're just going to
+	# split the log data into lines, look at each line, and see if any of our
+	# bad words exist in that line
+	#
+	# If we find any matches, just add the line to our list of errors
+	log_lines = data.split('\n')
+	for line in log_lines:
+		for word in error_text:
+			if word in line: errors.append(line)
+
+	return errors
+
+#############################################################################################
+#### Do the Work
+
+if __name__ == '__main__':
+	# If the log doesn't exist, then we have nothing to report on!
+	if not os.path.exists(log_file):
+		print('Log does not exist.')
+		sys.exit(25)
+
+	# Initialize our output string and exit variable
+	output = ''
+	e = 0
+
+	# Get our settings
+	settings = check_settings()
+
+	# Read the log
+	data, log_size = read_log(settings['Log_Size'])
+
+	# Update our records with the new size
+	settings['Log_Size'] = log_size
+	plistlib.writePlist(settings, settings_plist)
+
+	# Scan the log data for errors
+	errors = scan_log(data)
+
+	# If we didn't return any errors, then all's good!
+	if ( len(errors) == 0 ):
+		output += "No errors found in log."
+
+	# If we did, we can just pass the error messages through to our own output
+	# and exit 2 for a notification
+	else:
+		output += '\n'.join(errors)
+		e = 2
+
+	# Print our output and exit!
+	print(output)
+	sys.exit(e)
