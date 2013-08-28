@@ -22,6 +22,9 @@ import plistlib
 # Plugin-specific settings
 settings_plist = "/Library/MonitoringClient/PluginSupport/base_python_settings.plist"
 
+# Monitoring Client settings
+client_settings = "/Library/MonitoringClient/ClientSettings.plist"
+
 
 ###################################  Creating a Settings File  #################################
 # If your plugin needs to hold information of any kind, you can use a settings plist
@@ -88,6 +91,9 @@ if __name__ == '__main__':
 	#	so that they can be added to and/or changed later on easily
 	output = ''
 	e = 0
+
+	# Create/heal/retrieve any plugin-specific settings we'll need
+	settings = check_settings()
 
 	# The plugin may need some settings that are client-wide,
 	#	such as machine uptime or default settings
