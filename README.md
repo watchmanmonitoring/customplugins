@@ -83,7 +83,7 @@ Each entry will be presented within the PreferencePane, so long as the dictionar
 
 *PluginOptions*
 
-|_.Type|_.Value|_.Description|_.Stored as|
+|Type|Value|Description|Stored as|
 |------|-----|-----|----|
 |Checkbox|Positive or Negative|Positive = checked = true & set to false if not present Negative = checked = False, & set to true if not present (Positive is assumed)|bool|
 |FolderPicker|[ignored]|make this a “well”, so the end user has the option to drag & drop or click Select|string|
