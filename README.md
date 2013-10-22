@@ -84,16 +84,15 @@ Each entry will be presented within the PreferencePane, so long as the dictionar
 *PluginOptions*
 
 |_.Type|_.Value|_.Description|_.Stored as|
-|Checkbox|Positive or Negative|Positive = checked = true & set to false if not present
-Negative = checked = False, & set to true if not present (Positive is assumed)|bool|
+|------|-----|-----|----|
+|Checkbox|Positive or Negative|Positive = checked = true & set to false if not present Negative = checked = False, & set to true if not present (Positive is assumed)|bool|
 |FolderPicker|[ignored]|make this a “well”, so the end user has the option to drag & drop or click Select|string|
 |FilePicker|[ignored]|make this a “well”, so the end user has the option to drag & drop or click Select|string|
 |PopUpMenu|{array}|First item is default unless it is a blank|string|
 |Checkboxes|[ignored]|Each dictionary entry stored as a bool value, |Dictionary of bool values|
 |NumberPicker|Range|(0-12) whole numbers 0 through 12, inclusive|Number|
 |TextField|[max length]|Will store whatever the user enters, as entered|String|
-|DisplayOnly|ignored|There will be no user options here
-This will be used only to display the SettingTitle and/or Setting Hint|Empty|
+|DisplayOnly|ignored|There will be no user options here. This will be used only to display the SettingTitle and/or Setting Hint|Empty|
 
 
 PreferencePane visibility
