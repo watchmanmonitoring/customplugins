@@ -7,6 +7,9 @@ Non-Developers are welcome to start a new plugin by creating a folder for it, an
 
 Our development team will be glad to step in and start making the plugin a reality.
 
+Plugins can be writting in any language nativly supoorted by OS X including Python, BASH, SH, TSH and pearl to name a few
+
+Plugins will run as root - With great power comes great responsibilities.
 
 Overview of a Plugin's Operation
 --------------
@@ -38,7 +41,7 @@ _A future version of the server will gather & display messages sent with status 
 _If a plugin's exit status is 1, the warning will be reported to the Watchman Monitoring staff, for inspection of the plugin's failure._
 
 
-The name of your plugin must begin with an underscore _ 
+All custom plugins must begin with an underscore _ (i.e. _check_for_variable.plugin)
 
 A private repository is available as well.
 https://github.com/watchmanmonitoring/subscriberplugins
