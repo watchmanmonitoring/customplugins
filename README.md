@@ -15,9 +15,9 @@ Overview of a Plugin's Operation
 --------------
 
 An effective plugin needs to perform 3 Major tasks:
-* Do some work!
-* Print some output.
-* Exit with an appropriate status
+* Do some work! (Python, Bash, etc)
+* Print some output. (stdout please)
+* Exit with an appropriate status (0, 2, 20 details below)
 
 On each run of the monitoring client, the plugins folder is enumerated, and each plugin with a valid plist is run.
 
