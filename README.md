@@ -98,6 +98,11 @@ Each entry will be presented within the PreferencePane, so long as the dictionar
 |DisplayOnly|ignored|There will be no user options here. This will be used only to display the SettingTitle and/or Setting Hint|Empty|
 
 
+End-user Friendly Report
+--------------
+At this time, the server keeps a `plugin.rb#L193` which containts a list of end-user friendly statements to describe a failure. These would be added to the public portion of a ticket.
+
+
 PreferencePane visibility
 --------------
 
