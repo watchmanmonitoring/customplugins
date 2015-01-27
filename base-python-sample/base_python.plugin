@@ -15,6 +15,10 @@
 import os, sys
 import plistlib
 
+# We have a toolkit available for various functions, like checking settings and running
+# external commands
+sys.path.append('/Library/MonitoringClient/Utilities/Modules')
+from PluginToolkit import *
 
 ###################################  Creating a Settings File  #################################
 # We're going to go ahead and set some variables that are used throughout the pugin
@@ -30,33 +34,19 @@ client_settings = "/Library/MonitoringClient/ClientSettings.plist"
 # If your plugin needs to hold information of any kind, you can use a settings plist
 #	in ./PluginSupport.  If you do not need any user-defined settings, or need the plugin to
 #	hold any data (such as a timestamp, etc), you can safely delete this entire section.
+#
+# The Plugin Toolkit has everything needed to check for and verify settings, so all
+# you need is a base setup of defaults to start with
 
-def check_settings():
+# The plugin may need some settings that are client-wide,
+#	such as machine uptime or default settings
+client_settings = plistlib.readPlist(client_settings_plist)
 
-	# If there is no settings plist, we need to make one.
-	if not os.path.isfile(settings_plist): plistlib.writePlist({}, settings_plist)
-
-	# Now we try read the settings plist, and reset it if we can't
-	try: settings = plistlib.readPlist(settings_plist)
-	except: settings = {}
-
-	# Next, we create the settings keys, and make the plist self-healing
-	#	Set a variable to see if anything's changed, so we know if we need
-	#	to write any differences
-	changed = False
-
-	# If our desired option or record doesn't exist, create it with a default value
-	#
-	# This default value can be anything to specify that this is the first plugin run,
-	#	or a zeroed counter, a default log path, or anything that helps make the plugin
-	#	not break.
-	if 'Some_Setting' not in settings:
-		settings['Some_Setting'] = 'Default Value'
-		changed = True
-
-	# If we changed anything, we need to write the new plist
-	if changed: plistlib.writePlist(settings, settings_plist)
-
+base_settings = {
+	'Some_Setting':   'default string',
+	'Other_Settings': 6
+}
+settings = check_settings( base_settings, settings_plist )
 
 ####################################    Main Work Area   ###########################################
 # Main Plugin
@@ -91,13 +81,6 @@ if __name__ == '__main__':
 	#	so that they can be added to and/or changed later on easily
 	output = ''
 	e = 0
-
-	# Create/heal/retrieve any plugin-specific settings we'll need
-	settings = check_settings()
-
-	# The plugin may need some settings that are client-wide,
-	#	such as machine uptime or default settings
-	client_settings = plistlib.readPlist(client_settings_plist)
 
 	# This is where a lot of work would go ...
 	#

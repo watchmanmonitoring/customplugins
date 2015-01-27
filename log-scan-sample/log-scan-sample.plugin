@@ -12,125 +12,97 @@
 import os, sys
 import plistlib
 
-# You will need a settings plist to keep track of where you left off in the log
-settings_plist = '/Library/MonitoringClient/PluginSupport/log-scan-sample_settings.plist'
-
-# Specify the path to the log
-log_file = '/path/to/App.log'
+# We have a toolkit available for various functions, like checking settings and running
+# external commands
+sys.path.append('/Library/MonitoringClient/Utilities/Modules')
+from PluginToolkit import *
 
 # A list of bad words
 #	This can be provided via plist (NOT the _settings.plist, it will not get updated),
 #	but for simplicity we're just going to make a list here in the plugin.
-error_text = [
-	'ERROR',
-	'FATAL'
-]
+# Note how this is defined as a dict, with the desired exit status if the text is found
+bad_logs = {
+	'/path/to/log/file': {
+		'ERROR': 20
+		'FATAL': 2
+	}
+}
 
-#############################################################################################
-#### Plugin Functions
+# You will need a settings plist to keep track of where you left off in the log
+settings_plist = '/Library/MonitoringClient/PluginSupport/log-scan-sample_settings.plist'
 
-### Check for a valid settings file
-def check_settings():
-	if not os.path.isfile(settings_plist): plistlib.writePlist( {}, settings_plist)
-	try: settings = plistlib.readPlist(settings_plist)
-	except: settings = {}
-
-	# This section checks for desired keys
-	changed = False
-
-	# We want to keep track of where we are in the log, so we don't read the entire thing
-	#	every time
-	if 'Log_Length' not in settings:
-		settings['Log_Length'] = 0
-		changed = True
-
-	# Only need to write the Plist if we changed anything
-	if changed: plistlib.writePlist(self.settings, self.settings_plist)
-	return settings
-
-### Read the log and return the data and new size
-def read_log(size):
-
-	# We want to know the current size of the log
-	#	Sometimes getsize() returns a Long.  This is bad for plists, so make it an int
-	log_size = int( os.path.getsize(log_file) )
-
-	# Check the log's current size against our records.
-
-	# If we haven't run yet (our records say 0 size), then just update it to the current
-	# size.  We typically only care about new/recurring errors, we don't want to go read
-	# the entire history
-	if ( size == 0 ): size = log_size
-
-	# If the new size is smaller, then the log may have gotten cleared or rolled since the
-	# last run, so now we start from the beginning
-	if ( size > log_size ): size = 0
-
-	# Now we open up the log file, seek to where we left off, and read the rest.
-	FILE = open(log_file, 'r')
-	FILE.seek(size)
-	data = FILE.read()
-	FILE.close()
-
-	# Return the log data, and new log size
-	return data, log_size
-
-### Scan the log for errors
-def scan_log(data):
-
-	# Make a list to hold any problems we find
-	errors = []
-
-	# There are many ways to search through this and look for nasty messages
-	#
-	# To keep things simple for the sake of this example, we're just going to
-	# split the log data into lines, look at each line, and see if any of our
-	# bad words exist in that line
-	#
-	# If we find any matches, just add the line to our list of errors
-	log_lines = data.split('\n')
-	for line in log_lines:
-		for word in error_text:
-			if word in line: errors.append(line)
-
-	return errors
+# It's usually a good idea to keep track of where you were in the log file,
+# so that you don't end up having to re-read the entire thing every time
+# the plugin runs.  So, we're just going to use that as a base setting
+base_settings = {
+	'Log_Length': 0
+}
+settings = check_settings( base_settings, settings_plist )
 
 #############################################################################################
 #### Do the Work
 
 if __name__ == '__main__':
-	# If the log doesn't exist, then we have nothing to report on!
-	if not os.path.exists(log_file):
-		print('Log does not exist.')
-		sys.exit(25)
-
 	# Initialize our output string and exit variable
 	output = ''
-	e = 0
 
-	# Get our settings
-	settings = check_settings()
+	# We could have many logs to check, and competing exit statuses, so we'll
+	# keep those in a list this time, starting with the default "Nothing
+	# to see here" status
+	elist = [ 25 ]
 
-	# Read the log
-	data, log_size = read_log(settings['Log_Size'])
+	# Simple log scanning is one of the things we provide in the
+	# PluginToolkit imported aboveYou can use it by calling the
+	# LogScanner() class and a few basic tasksRead the log
+	scanner = LogScanner()
 
-	# Update our records with the new size
-	settings['Log_Size'] = log_size
-	plistlib.writePlist(settings, settings_plist)
+	# Set the path to the log file
+	# You can do this multiple times in the same plugin to check multiple
+	# files.  Setting the path will reset any information gathered when
+	# using a previous path.
+	# To demonstrate, that is why the bad_logs is designed like it is above
+	for log_file in bad_logs.keys():
 
-	# Scan the log data for errors
-	errors = scan_log(data)
+		# If the path doesn't exist, this will return a False
+		if not scanner.set_path( log_file ):
+			continue
 
-	# If we didn't return any errors, then all's good!
-	if ( len(errors) == 0 ):
-		output += "No errors found in log."
+		# Get the new size of the log file, and keep track of it
+		settings['Log_Length'] = scanner.get_size( settings['Log_Length'] )
+		plistlib.writePlist( settings, settings_plist )
 
-	# If we did, we can just pass the error messages through to our own output
-	# and exit 2 for a notification
-	else:
-		output += '\n'.join(errors)
-		e = 2
+		# Read the contents of the log starting from the previously recorded size
+		scanner.read_log()
+
+		# Now, look for each error we defined above
+		# Provide both the text, and exit status desired to the function
+		# It is designed so that the most serious exit status will be used (ie, an
+		#  exit 2 will not get replaced by an exit 20)
+		# This function will return a list of lines that contain the text provided
+		bad_text = bad_logs[log_file]
+		error_list = []
+		for text in bad_text.keys():
+			errors = scanner.scan_log( text, bad_text[text] )
+			for error in errors: error_list.append( error )
+
+		# If we didn't return any errors, then all's good!
+		if ( len(error_list) == 0 ):
+			output += "No errors found in %s.\n" % log_file
+
+		# If we did, we can just pass the error messages through to our own output
+		else:
+			output += 'Errors found in %s:\n%\n\n' % ( log_file, '\n'.join(error_list) )
+
+		# The class will have saved the most serious exit status, found, so
+		# We'll add that to the list of statuses
+		elist.append( scanner.e )
 
 	# Print our output and exit!
 	print(output)
-	sys.exit(e)
+
+	# Pick an exit status, in order of importance
+	if ( 200 in elist ): sys.exit(200)
+	elif ( 2 in elist ): sys.exit(2)
+	elif ( 20 in elist ): sys.exit(20)
+	elif ( 0 in elist): sys.exit(0)
+	else: sys.exit(25)
