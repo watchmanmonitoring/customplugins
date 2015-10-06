@@ -45,6 +45,7 @@ client_settings = plistlib.readPlist(client_settings_plist)
 base_settings = {
 	'Some_Setting':   'default string',
 	'Other_Settings': 6
+	'PrefPaneVisibility':        True
 }
 settings = check_settings( base_settings, settings_plist )
 
