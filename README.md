@@ -34,8 +34,9 @@ The server will act according to how a plugin reports and exits.  The following 
 * *0* - We're All Good = Information will be displayed at the server, but not emailed.
 * *2* - Big Problem! = This information will be displayed on the server, and trigger an email.
 * *20* - Information worth reporting was found, but no email should be sent.
+* *200* - A one-time Alert = This is an event you need to know about. An email will be sent, even amongst other repeating errors
 * *25* - Nothing to see here = Information will not be sent to the server (and not emailed)
-
+* 
 _A future version of the server will gather & display messages sent with status 20._
 
 _If a plugin's exit status is 1, the warning will be reported to the Watchman Monitoring staff, for inspection of the plugin's failure._
