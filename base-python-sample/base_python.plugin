@@ -1,98 +1,88 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
-################################################################################################
+# This sample will try to outline what's generally needed for a plugin,
+# and how the client expects a plugin to respond.
 #
-# This sample will try to outline what's generally needed for a plugin, and how the client
-#	expects a plugin to respond.
-#
-# For more detailed examples and specific purpose plugins (log scanning, command status, etc)
-#	please refer to another sample, or ask us to make one!
+# For more detailed examples and specific purpose plugins like log scanning,
+# command status, etc, please refer to another sample or ask us to make one!
 
-# Import needed modules.
-#
-# If you are familiar enough with Python to create a plugin, you should already
-#	know what to do here.
-import os, sys
+import os
+import sys
 import plistlib
 
-# We have a toolkit available for various functions, like checking settings and running
-# external commands
+# We have a toolkit available for various functions,
+# like checking settings and running external commands
 sys.path.append('/Library/MonitoringClient/Utilities/Modules')
 from PluginToolkit import *
 
-###################################  Creating a Settings File  #################################
-# We're going to go ahead and set some variables that are used throughout the pugin
+# Creating a Settings File  #
+# Set constants used throughout the plugin.
 
 # Plugin-specific settings
-settings_plist = "/Library/MonitoringClient/PluginSupport/base_python_settings.plist"
+PLUGIN_PLIST_PATH = ("/Library/MonitoringClient/PluginSupport/"
+                     "base_python_settings.plist"
+                     )
 
 # Monitoring Client settings
-client_settings = "/Library/MonitoringClient/ClientSettings.plist"
+CLIENT_PLIST_PATH = "/Library/MonitoringClient/ClientSettings.plist"
 
 
-###################################  Creating a Settings File  #################################
-# If your plugin needs to hold information of any kind, you can use a settings plist
-#	in ./PluginSupport.  If you do not need any user-defined settings, or need the plugin to
-#	hold any data (such as a timestamp, etc), you can safely delete this entire section.
-#
-# The Plugin Toolkit has everything needed to check for and verify settings, so all
-# you need is a base setup of defaults to start with
+# Creating a Settings File  #
+# If your plugin needs to hold information of any kind, you can use a settings
+# plist in ./PluginSupport. If you do not need user-defined settings, or need
+# the plugin to hold any data (such as a timestamp, etc), you can safely delete
+# this entire section. The Plugin Toolkit has everything needed for checking
+# and verifying settings, so all you need is a base setup of defaults to start.
 
 # The plugin may need some settings that are client-wide,
-#	such as machine uptime or default settings
-client_settings = plistlib.readPlist(client_settings_plist)
+# such as machine uptime or default settings
 
-base_settings = {
-	'Some_Setting':   'default string',
-	'Other_Settings': 6
-	'PrefPaneVisibility':        True
+CLIENT_SETTINGS = plistlib.readPlist(CLIENT_PLIST_PATH)
+
+DEFAULT_PLUGIN_SETTINGS = {
+    'PluginTimeout':   '20',
+    'Other_Settings': 6,
+    'PrefPaneVisibility':        True
 }
-settings = check_settings( base_settings, settings_plist )
 
-####################################    Main Work Area   ###########################################
-# Main Plugin
+# Main Work Area  #
 # This is where the work is done
 #
 # An effective plugin needs to perform 3 Major tasks:
-#		1) Do some work!
-#		2) Print some output.
-#		3) Exit with an appropriate status
+#     1) Do some work!
+#     2) Print some output.
+#     3) Exit with an appropriate status
 #
-#	The Monitoring Client reads the output of the plugin, and reports it back to a server
-# along with the exit status.  The exit status lets the server know the severity of
-# any issues this plugin found.
+# The Monitoring Client reads the output of the plugin, and reports it back
+# to a server along with the exit status.  The exit status lets the server know
+# the severity of any issues this plugin found.
 #
 # Exit Statuses:
-#		0 = We're All Good = Information will be displayed at the server, but not emailed.
-#		1 = Fail! = This is reserved for scripts failures, such as code bugs or python errors
-#		2 = Big Problem! = This information will be displayed on the server, and trigger an email.
-#		20 = Information worth reporting was found, but no email should be sent.
-#		25 = Nothing to see here = Information will not be sent to the server (and not emailed)
+#     0 = All Good = Info displayed on server, but not emailed.
+#     1 = Fail! = Reserved for scripts failures, such as bugs or python errors
+#     2 = Big Problem! = Info displayed on server, and trigger an email alert.
+#     20 = Information worth reporting was found, but no email should be sent.
+#     25 = No Output = Info will not be sent to the server or trigger an alert.
 #
-# It's also noteworthy that the plugin needs to be executable by root in order to
-# function properly, so it may be necessary to chmod 744 the plugin.
+# It's also noteworthy that the plugin needs to be executable by root in order
+# to function properly, so it may be necessary to chmod 744 the plugin.
 #
 # Plugin output is also trimmed down to 16kb
-#	If the client receives information from a plugin that exceeds this size, a message is sent
-#	in place of the output that will notify that this happened
+# If the client receives information from a plugin that exceeds this size,
+# a message is sent in place of the output that will notify that this happened
+
+
+def main():
+    plugin_settings = check_settings(DEFAULT_PLUGIN_SETTINGS,
+                                     PLUGIN_PLIST_PATH
+                                     )
+    # This is where a lot of work would go ...
+    # It's usually a good idea to go ahead and set an output and exit variable,
+    # so that they can be added to and/or changed later on easily
+    plugin_output = "Base Python Plugin Output!"
+    exit_code = 0
+    print(plugin_output)
+    sys.exit(exit_code)
 
 if __name__ == '__main__':
-
-	# It's usually a good idea to go ahead and set an output and exit variable,
-	#	so that they can be added to and/or changed later on easily
-	output = ''
-	e = 0
-
-	# This is where a lot of work would go ...
-	#
-	#	read
-	#	scan
-	#	... coffee break ...
-	#	check
-	#	command
-
-	# We don't really do anything in this plugin, so we're just going to add something
-	#	to the output to print out, and exit with our initialized exit status
-	output += "Base Python Plugin Output!"
-	print(output)
-	sys.exit(e)
+    main()
