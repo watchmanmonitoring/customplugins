@@ -10,7 +10,7 @@
 			<key>SettingStorageKey</key>
 			<string>.</string>
 			<key>SettingStoragePath</key>
-			<string>/Library/MonitoringClient/PluginSupport/PLUGIN_TITLE.plist</string>
+			<string>/Library/MonitoringClient/PluginSupport/PLUGIN_TITLE_settings.plist</string>
 			<key>SettingTitle</key>
 			<string>SETTING TITLE</string>
 			<key>SettingTitleHint</key>
@@ -28,7 +28,7 @@
 	<string>1.0</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>/Library/MonitoringClient/Plugins/base_python.plugin</string>
+		<string>/Library/MonitoringClient/Plugins/_base_python.plugin</string>
 	</array>
 </dict>
 </plist>

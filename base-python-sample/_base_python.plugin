@@ -21,7 +21,7 @@ sys.path.append('/Library/MonitoringClient/Utilities/Modules')
 from PluginToolkit import *
 
 ###################################  Creating a Settings File  #################################
-# We're going to go ahead and set some variables that are used throughout the pugin
+# We're going to go ahead and set some variables that are used throughout the plugin
 
 # Plugin-specific settings
 settings_plist = "/Library/MonitoringClient/PluginSupport/base_python_settings.plist"

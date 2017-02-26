@@ -7,7 +7,7 @@ Non-Developers are welcome to start a new plugin by creating a folder for it, an
 
 Our development team will be glad to step in and start making the plugin a reality.
 
-Plugins can be writting in any language nativly supoorted by OS X including Python, BASH, SH, TSH and pearl to name a few
+Plugins can be written in any language natively supported by OS X including Python, BASH, SH, TSH and pearl to name a few
 
 Plugins will run as root - With great power comes great responsibilities.
 
@@ -26,7 +26,7 @@ The Monitoring Client reads the output (stdout) of each plugin, and includes thi
 The plugin's architect uses the exit status to the server know the severity of the report.
 
 
-Exit Statuses and the Watchman Monitoring server 
+Exit Status and the Watchman Monitoring server 
 --------------
 
 The server will act according to how a plugin reports and exits.  The following exit statuses are used:
@@ -45,7 +45,7 @@ _If a plugin's exit status is 1, the warning will be reported to the Watchman Mo
 All custom plugins must begin with an underscore _ (i.e. _check_for_variable.plugin)
 
 A private repository is available as well.
-https://github.com/watchmanmonitoring/subscriberplugins
+https://github.com/watchmanmonitoring/subscriberplugins (Github will show a 404 on that page unless you have access. Access is granted by contacting Watc
 
 
 Preference Pane Options
@@ -101,7 +101,7 @@ Each entry will be presented within the PreferencePane, so long as the dictionar
 
 End-user Friendly Report
 --------------
-At this time, the server keeps a `plugin.rb#L193` which containts a list of end-user friendly statements to describe a failure. These would be added to the public portion of a ticket.
+At this time, the server keeps a `plugin.rb#L193` which contains a list of end-user friendly statements to describe a failure. These would be added to the public portion of a ticket.
 
 
 PreferencePane visibility
