@@ -1,0 +1,135 @@
+#! /usr/bin/env python
+
+'''
+Log scanning is one of the most common ways to check up on a program.
+
+This sample plugin will lay out a basic method to check a log for
+reported errors using using 
+Please refer to the basic-python-sample for information on plugin requirements.
+
+You will need to specify some basic information, such as the path to the log and
+and a list of bad words to look for inside the log.
+'''
+import os, sys
+from PluginToolkit import *
+
+''' Settings
+The list of logs to check will be looped through later.  It's of the
+format:
+
+  log path:
+    word to look for -> exit status when it's found
+'''
+bad_logs = {
+	'/path/to/log/file' : {
+		'ERROR'         : 20,
+		'FATAL'         : 2
+	}
+}
+
+
+'''
+Keep some settings saying where we were in a log file.  To keep things
+basic, it's just:
+
+  Logs:
+    log path -> log size
+'''
+settings_plist = '/Library/MonitoringClient/PluginSupport/_log_scan_sample_settings.plist'
+base_settings = {
+	'Logs': {}
+}
+settings = check_settings(base_settings, settings_plist)
+
+''' Main
+The LogScanner() class tries to keep this as simple as possible, but
+you'll still need to handle some basic organization, as you can see in
+the settings outlined above.
+
+Obviously this outline will use the formats provided in these settings,
+but feel free to do whatever works for you.
+
+Basic usage of PluginToolkit.LogScanner() is as follows:
+
+# Load it up
+scanner = LogScanner()
+
+# Give it a file
+# Will return False if the path doesn't exist
+scanner.set_path(log_file)
+
+# Find your place
+# This does two things:
+#  1) seek to the old value (if provided and in the file),
+#  2) return a new one
+settings[log_file] = scanner.get_size(settings[log_file])
+
+# Read the log
+# Will return False if it fails
+scanner.read_log()
+
+# Scan for text
+# A simple line-by-line search, regex not currently supported
+# Returns a list of lines containing the text provided
+error_msgs = scanner.scan_log(msg)
+'''
+def main():
+	output      = ''
+	status_list = [0]
+	scanner     = LogScanner()
+
+	'''
+	A few things to note here ...
+
+	At the end of the plugin run, output will be built by appending
+	text, and the exit status will be picked based off severity from a
+	list.
+
+	Above, a blank string to += later and base list of exit statuses
+	was created.  The loop to check logs will basically follow the
+	logic:
+
+		Read a file
+		Scan for some text
+		Append found text to output
+		Append corresponding exit status to status list
+	'''
+	for log_file in bad_logs:
+		Log.write('Checking %s ...' % log_file)
+		if not scanner.set_path(log_file):
+			Log.write('Path not found.')
+			continue
+		if not scanner.read_log():
+			Log.write('Could not read file.')
+			continue
+
+		settings['Logs'][log_file] = scanner.get_size(
+			settings['Logs'].get(log_file)
+		)
+
+		error_list = []
+		for text in bad_logs[log_file]:
+			error_list.extend(
+				scanner.scan_log(text, bad_logs[log_file][text])
+			)
+		if not error_list:
+			output += 'No errors found in %s.\n' % log_file
+			continue
+
+		output += 'Errors found in %s:\n%\n\n' % (
+			log_file,
+			'\n'.join(error_list)
+		)
+		status_list.append(scanner.e)
+
+	writePlist(settings, settings_plist)
+	print(output)
+
+	if output == '': sys.exit(25)
+	elif status_list.count(200): sys.exit(200)
+	elif status_list.count(2): sys.exit(2)
+	elif status_list.count(20): sys.exit(20)
+	else: sys.exit(0)
+
+if __name__ == '__main__':
+	main()

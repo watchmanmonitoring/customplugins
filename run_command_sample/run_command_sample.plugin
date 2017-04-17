@@ -1,0 +1,51 @@
+#! /usr/bin/env python
+
+''' Running Commands
+Often times, we can rely on installed tools and services to provide the
+status of an application.
+
+This sample plugin will lay out how to use and what to expect from the
+run_cmd() function from PluginToolkit.
+
+Please refer to the basic python sample for information on plugin
+requirements.
+'''
+import sys
+from PluginToolkit import *
+
+'''
+Commands can fail in many ways for countless reasons ... dealing with
+those failures shouldn't be a chore.  Enter run_cmd().
+
+run_cmd(), in a perfect world, will pass the provided command through
+subprocess.Popen() and return the command's output, errors, and exit
+status.
+
+  output, errors, status = run_cmd(['ls'])
+
+Where output and errors are stdout and stderr values, and the exit
+status is from Popen().wait().  The command can be provided as either
+a string or list.
+
+Optionally, a timeout can be provided to set a max time for the command
+to complete (defaults to 20 seconds).  If a timeout occurs, None is
+returned as the status.
+'''
+def main():
+	cmd = ['ls', '-la']
+	timeout = 20
+	output, errors, status = run_cmd(cmd, timeout)
+	if status != 0:
+		Log.write('Command failed: %s\nOutput: %s\n\nErrors:\n%s' % (
+			str(status),
+			output,
+			errors
+		))
+		sys.exit(1)
+
+	if output: print(output)
+	if errors: print(errors)
+	sys.exit(status)
+
+if __name__ == '__main__':
+	main()

@@ -1,0 +1,119 @@
+#! /usr/bin/env python
+
+''' Basic Plugin
+This sample will try to outline what's generally needed for a plugin,
+and how the client expects a plugin to respond.
+
+An effective plugin needs to perform 3 Major tasks:
+	1) Do some work!
+	2) Print some output.
+	3) Exit with an appropriate status
+
+The Monitoring Client reads the output of the plugin, and reports it
+back to a server along with the exit status.  The exit status lets the
+server know the severity of any issues this plugin found.
+
+Exit Statuses:
+    0  = We're All Good
+         Information will be displayed at the server, but not emailed.
+    1  = Fail!
+         This is reserved for scripts failures, such as bugs.
+    2  = Big Problem!
+         This information will be displayed on the server, and trigger an email.
+    20 = Information worth reporting was found, but no email should be sent.
+    25 = Nothing to see here
+         Information will not be sent to the server (and not emailed)
+
+Some extra features are made available through the environment created
+by the client, such as logging and basic checks, through the
+PluginToolkit module.
+
+For more detailed examples and specific purpose plugins (log scanning,
+command status, etc) please refer to another sample, or ask us to make
+one!
+'''
+import os, sys
+from PluginToolkit import *
+
+''' Troubleshooting and Logging
+Troubleshooting is a little bit easier when you know where to look.
+
+Our ClientLogging() is available through PluginToolkit.Log and as far
+as plugins go only has one real thing to call:
+
+  Log.write('Some helpful text.')
+
+Backend logic handles where and how to write those log messages, but
+you can set some hard options:
+
+  Log.log_file = '/path/to/alt/file.log'
+  Log.enabled  = True
+
+The easiest way to effectively test your plugin and make use of Toolkit
+features is through our RunPlugin layer:
+
+  sudo /Library/MonitoringClient/RunPlugin _base_python.plist
+'''
+Log.write('Checking settings ...')
+
+''' Plugin Settings
+It's not uncommon to have to keep track of information, such as a
+timestamp or file size, or enable PrefPaneVisibility and provide some
+user-adjustable items.
+
+PluginSettings.check_settings() provides an easy way to provide some
+defaults and verify existing settings.
+'''
+settings_plist = '/Library/MonitoringClient/PluginSupport/_base_python_settings.plist'
+base_settings = {
+	'Some_Setting'       : 'default string',
+	'Other_Settings'     : 6,
+	'PrefPaneVisibility' : True
+}
+settings = check_settings(base_settings, settings_plist)
+
+''' Plist handling
+Plists can be a pain if you're not sure what you're going to run into
+(binary vs xml, etc), and there's no real clean way to check before
+trying to read it.
+
+PluginToolkit has some functions to mimick plistlib usage to help deal
+with whatever you might come across.  Specifically:
+
+  PluginToolkit.readPlist()
+  PluginToolkit.writePlist()
+  PluginToolkit.readPlistFromString()
+  PluginToolkit.writePlistToString()
+'''
+app_plist = '/Library/App/Logs/Log.plist'
+app_data = readPlist(app_plist)
+
+''' Notes
+It's also noteworthy that the plugin needs to be executable by root in
+order to function properly, so it may be necessary to chmod 744 the
+plugin.
+
+Plugin output is trimmed down to 16kb.  If the client receives
+information from a plugin that exceeds this size, a notification will
+be sent in place of the output.
+'''
+
+def main():
+	Log.write('Starting plugin ...')
+	output = ''
+	e = 0
+
+	# This is where a lot of work would go ...
+	#
+	#    read
+	#    scan
+	#    ... coffee break ...
+	#    check
+	#    command
+
+	output += "Base Python Plugin Output!"
+	print(output)
+	sys.exit(e)
+
+if __name__ == '__main__':
+	main()
