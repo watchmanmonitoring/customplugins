@@ -61,7 +61,7 @@ It's not uncommon to have to keep track of information, such as a
 timestamp or file size, or enable PrefPaneVisibility and provide some
 user-adjustable items.
 
-PluginSettings.check_settings() provides an easy way to provide some
+PluginToolkit.check_settings() provides an easy way to provide some
 defaults and verify existing settings.
 '''
 settings_plist = '/Library/MonitoringClient/PluginSupport/_base_python_settings.plist'
