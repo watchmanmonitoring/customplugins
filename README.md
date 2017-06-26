@@ -45,7 +45,7 @@ _If a plugin's exit status is 1, the warning will be reported to the Watchman Mo
 All custom plugins must begin with an underscore _ (i.e. _check_for_variable.plugin)
 
 A private repository is available as well.
-https://github.com/watchmanmonitoring/subscriberplugins (Github will show a 404 on that page unless you have access. Access is granted by contacting Watc
+https://github.com/watchmanmonitoring/subscriberplugins (Github will show a 404 on that page unless you have access. Access is granted by contacting [Watchman Monitoring support](https://support.watchmanmonitoring.com/hc/requests/new).
 
 
 Preference Pane Options
