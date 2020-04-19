@@ -118,7 +118,6 @@ A plugin will be fully disabled when it's file name is added to
 
 as an entry in the array _PluginsDisabled_
 
-
 Disabling the Plugin's display option
 --------------
 
@@ -127,3 +126,29 @@ We support a boolean key titled _PrefPaneVisibility_ in any given plugin's _sett
 If this key is either missing or True, the plugin will be shown in the PreferencePane.
 
 Programmatically changing the key to False is a way to prevent the options from being displayed, though the plugin itself can still run.
+
+
+### Integration links in Process/v3 JSON payload
+
+#### Example
+
+```json
+{
+  "plugins": [
+    {
+      "status": 0,
+      "visible": true,
+      "name": "Plugin with Integration Links",
+      "metadata": [
+        {
+          "name": "Link Name",
+          "datatype": "integration_link",
+          "visible": true,
+          "identifier": null,
+          "value": "https://example.com"
+        }
+      ]
+    }
+  ]
+}
+```
