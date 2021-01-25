@@ -5,13 +5,14 @@ Often times, we can rely on installed tools and services to provide the
 status of an application.
 
 This sample plugin will lay out how to use and what to expect from the
-run_cmd() function from PluginToolkit.
+run_cmd() function from Toolkit.
 
 Please refer to the basic python sample for information on plugin
 requirements.
 '''
 import sys
-from PluginToolkit import *
+from Toolkit import Log
+from Toolkit.run_cmd import run_cmd
 
 '''
 Commands can fail in many ways for countless reasons ... dealing with
@@ -41,11 +42,11 @@ def main():
 			output,
 			errors
 		))
-		sys.exit(1)
+		return 1
 
 	if output: print(output)
 	if errors: print(errors)
-	sys.exit(status)
+	return status
 
 if __name__ == '__main__':
-	main()
+	sys.exit( main() )

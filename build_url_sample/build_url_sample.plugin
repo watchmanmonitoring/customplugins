@@ -9,7 +9,9 @@ This plugin sample will attempt to lay out a way snatch information
 from the client to build a machine-specific URL.
 '''
 import os, sys
-from PluginToolkit import *
+from Toolkit import check_settings
+from Toolkit import write_settings
+from Toolkit import readPlist
 
 '''
 Pretty simple setup here, we're going to use a known key to ask for a
@@ -18,19 +20,19 @@ machine ID of some sort from an application's configuration plist.
 Settings-wise, we're holding the value of whatever we find, and will
 issue a warning if it changes.
 '''
-base_url       = 'http://www.myawesomeservice.com/machines.php?machine_id=%s'
-app_plist      = '/path/to/app.plist'
+base_url  = 'http://www.myawesomeservice.com/machines.php?machine_id=%s'
+app_plist = '/path/to/app.plist'
 
-settings_plist = '/Library/MonitoringClient/PluginSupport/_build_url_sample_settings.plist'
-base_settings  = {
+settings_file = '/Library/MonitoringClient/PluginSupport/_build_url_sample_settings.plist'
+base_settings = {
 	'machine_id' : ''
 }
-settings       = check_settings(base_settings, settings_plist)
+settings = check_settings(base_settings, settings_file)
 
 def main():
 	e = 0
 	if not os.path.exists(app_plist):
-		sys.exit(25)
+		return 25
 	app_data = readPlist(app_plist)
 	machine_id = app_data.get('machine_id', settings['machine_id'])
 
@@ -42,11 +44,11 @@ def main():
 		e = 2
 
 	settings['machine_id'] = machine_id
-	writePlist(settings, settings_plist)
+	write_settings(settings, settings_file)
 
 	machine_url = base_url % machine_id
 	print('Machine URL: %s' % machine_url)
-	sys.exit(e)
+	return e
 
 if __name__ == '__main__':
-	main()
+	sys.exit( main() )

@@ -11,7 +11,10 @@ You will need to specify some basic information, such as the path to the log and
 and a list of bad words to look for inside the log.
 '''
 import os, sys
-from PluginToolkit import *
+from Toolkit import Log
+from Toolkit import check_settings
+from Toolkit import write_settings
+from LogScanner import LogScanner
 
 ''' Settings
 The list of logs to check will be looped through later.  It's of the
@@ -35,11 +38,11 @@ basic, it's just:
   Logs:
     log path -> log size
 '''
-settings_plist = '/Library/MonitoringClient/PluginSupport/_log_scan_sample_settings.plist'
+settings_file = '/Library/MonitoringClient/PluginSupport/_log_scan_sample_settings.plist'
 base_settings = {
 	'Logs': {}
 }
-settings = check_settings(base_settings, settings_plist)
+settings = check_settings(base_settings, settings_file)
 
 ''' Main
 The LogScanner() class tries to keep this as simple as possible, but
@@ -49,7 +52,7 @@ the settings outlined above.
 Obviously this outline will use the formats provided in these settings,
 but feel free to do whatever works for you.
 
-Basic usage of PluginToolkit.LogScanner() is as follows:
+Basic usage of LogScanner() is as follows:
 
 # Load it up
 scanner = LogScanner()
@@ -122,14 +125,14 @@ def main():
 		)
 		status_list.append(scanner.e)
 
-	writePlist(settings, settings_plist)
+	write_settings(settings, settings_file)
 	print(output)
 
-	if output == '': sys.exit(25)
-	elif status_list.count(200): sys.exit(200)
-	elif status_list.count(2): sys.exit(2)
-	elif status_list.count(20): sys.exit(20)
-	else: sys.exit(0)
+	if output == '': return 25
+	elif status_list.count(200): return 200
+	elif status_list.count(2): return 2
+	elif status_list.count(20): return 20
+	else: return 0
 
 if __name__ == '__main__':
-	main()
+	sys.exit( main() )
