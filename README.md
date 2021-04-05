@@ -1,14 +1,14 @@
 ## Custom Plugins
 
-A repository for customer built plugins, based off the included template
+A repository for customer built plugins, based off the included template.  
 
-Non-Developers are welcome to start a new plugin by creating a folder for it, and laying out a readme file with the goals.
+Non-Developers are welcome to start a new plugin by creating a folder for it, and laying out a readme file with the goals.  
 
-Our development team will be glad to step in and start making the plugin a reality.
+Our development team will be glad to step in and start making the plugin a reality.  
 
-Plugins can be written in any language natively supported by OS X including Python, bash, sh, zsh and pearl to name a few
+Plugins can be written in any language natively supported by OS X. Historically this has included Python, bash, sh, zsh, perl, etc.  
 
-Plugins will run as root - With great power comes great responsibilities.
+Plugins will run as root - With great power comes great responsibilities.  
 
 #### Overview of a Plugin's Operation
 
@@ -22,11 +22,12 @@ Each plugin requires at least 2 files to function, optionally more:
 - *pluginname*_settings.plist - (Optional) Plist that can contain settings/data specific to the plugin's operation, any data the plugin needs to save. This file lives in `/Library/MonitoringClient/PluginSupport` and the plugin code should generate it if/when it doesn't exist with any default settings/data.
 
 An effective plugin needs to perform 3 Major tasks:
+
 * Do some work to determine if any kind of condition worth reporting to the dashboard exists.
 * Print some output to `stdout`.
 * Exit with an appropriate status (0, 2, 20, 25, 200, details below).
 
-On each run of the monitoring client, the plugins folder is enumerated, and each plugin with a valid plist is run.
+On each hourly run, the Monitoring Client enumerates the candidates in the `Plugins` folder, and runs them in alphabetical order.
 
 The Monitoring Client reads the output (`stdout`) of each plugin, and includes this text, as well as the exit status, to the Watchman Monitoring server. The plugin's architect uses the exit status to let the server know the severity of the report.
 
