@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PluginName</key>
+	<string>Prefpane GUI Example</string>
+	<key>PluginSlug</key>
+	<string>prefpane_gui_example</string>
+	<key>PluginUUID</key>
+	<string>89ae7437-af6f-47f2-a585-757484c8ca65</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>prefpane_gui_example.plugin</string>
+	</array>
+	<key>PluginOptions</key>
+	<array>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>number_picker</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>A Number Picker Object</string>
+			<key>SettingTitleHint</key>
+			<string>String. Lets you pick from a range of numbers, ex: "0-10"</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>NumberPicker</string>
+				<key>Value</key>
+				<string>0-10</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>display_only</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>A DisplayOnly object</string>
+			<key>SettingTitleHint</key>
+			<string>String. Hint Text Here</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>DisplayOnly</string>
+				<key>Value</key>
+				<string></string>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>text_field</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>TextField</string>
+			<key>SettingTitleHint</key>
+			<string>String. A text entry field.</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>TextField</string>
+				<key>Value</key>
+				<string>140</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>checkbox_list</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>Checkboxes</string>
+			<key>SettingTitleHint</key>
+			<string>A list of checkboxes based from a settings dictionary.</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>Checkboxes</string>
+				<key>Value</key>
+				<string></string>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>checkbox_positive</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>Checkbox - Positive</string>
+			<key>SettingTitleHint</key>
+			<string>Bool. Checked == setting bool is true</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>Checkbox</string>
+				<key>Value</key>
+				<string>Positive</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>checkbox_negative</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>Checkbox - Positive</string>
+			<key>SettingTitleHint</key>
+			<string>Bool. Checked == setting bool is false</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>Checkbox</string>
+				<key>Value</key>
+				<string>Negative</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>username</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>Username</string>
+			<key>SettingTitleHint</key>
+			<string>String. A username field</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>UsernameField</string>
+				<key>Value</key>
+				<string>256</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>password</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>Password</string>
+			<key>SettingTitleHint</key>
+			<string>String. A password field, input obscured.</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>PasswordField</string>
+				<key>Value</key>
+				<string>256</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>popup</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>PopUpMenu</string>
+			<key>SettingTitleHint</key>
+			<string>String. A popup picker menu.</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>PopUpMenu</string>
+				<key>Value</key>
+				<array>
+					<string>Item 1</string>
+					<string>Item 2</string>
+					<string>Item 3</string>
+					<string>Item 4</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>file_picker</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>FilePicker</string>
+			<key>SettingTitleHint</key>
+			<string>String. A drag/drop or selection file picker.</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>FilePicker</string>
+				<key>Value</key>
+				<string></string>
+			</dict>
+		</dict>
+		<dict>
+			<key>SettingStorageKey</key>
+			<string>folder_picker</string>
+			<key>SettingStoragePath</key>
+			<string>/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist</string>
+			<key>SettingTitle</key>
+			<string>FolderPicker</string>
+			<key>SettingTitleHint</key>
+			<string>String. A drag/drop or selection folder picker.</string>
+			<key>SettingType</key>
+			<dict>
+				<key>Type</key>
+				<string>FolderPicker</string>
+				<key>Value</key>
+				<string></string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>

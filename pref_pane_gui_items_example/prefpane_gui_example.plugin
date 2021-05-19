@@ -1,0 +1,60 @@
+#!/bin/bash
+
+###### Example plugin that constructs Pref Pane menu objects
+
+settingsFile="/Library/MonitoringClient/PluginSupport/prefpane_gui_example_settings.plist"
+
+## Write default values to settings plist if it's not there
+if [[ ! -f "$settingsFile" ]]; then
+	# number_picker
+	/usr/libexec/PlistBuddy -c "add :number_picker string '0'" "$settingsFile" 2>/dev/null
+	# text_field
+	/usr/libexec/PlistBuddy -c "add :text_field string 'Example Text'" "$settingsFile"
+	# checkbox_list
+	/usr/libexec/PlistBuddy -c "add :checkbox_list dict" \
+		-c "add :checkbox_list:ItemA bool true" \
+		-c "add :checkbox_list:ItemB bool false" \
+		-c "add :checkbox_list:ItemC bool false" \
+		"$settingsFile"
+	# checkbox_positive
+	/usr/libexec/PlistBuddy -c "add :checkbox_positive bool true" "$settingsFile"
+	# checkbox_negative
+	/usr/libexec/PlistBuddy -c "add :checkbox_negative bool true" "$settingsFile"
+	# username
+	/usr/libexec/PlistBuddy -c "add :username string 'Patrick Mahomes'" "$settingsFile"
+	# password
+	/usr/libexec/PlistBuddy -c "add :password string 'Run1tB@ck!!'" "$settingsFile"
+	# popup
+	/usr/libexec/PlistBuddy -c "add :popup string 'Item 1'" "$settingsFile"
+	# file_picker
+	/usr/libexec/PlistBuddy -c "add :file_picker string ''" "$settingsFile"
+	# folder_picker
+	/usr/libexec/PlistBuddy -c "add :folder_picker string ''" "$settingsFile"
+fi
+
+## Do work, read some values
+number_picker=$(/usr/libexec/PlistBuddy -c "print :number_picker" "$settingsFile")
+text_field=$(/usr/libexec/PlistBuddy -c "print :text_field" "$settingsFile")
+checkbox_list=$(/usr/libexec/PlistBuddy -c "print :checkbox_list" "$settingsFile")
+checkbox_positive=$(/usr/libexec/PlistBuddy -c "print :checkbox_positive" "$settingsFile")
+checkbox_negative=$(/usr/libexec/PlistBuddy -c "print :checkbox_negative" "$settingsFile")
+username=$(/usr/libexec/PlistBuddy -c "print :username" "$settingsFile")
+password=$(/usr/libexec/PlistBuddy -c "print :password" "$settingsFile")
+popup=$(/usr/libexec/PlistBuddy -c "print :popup" "$settingsFile")
+file_picker=$(/usr/libexec/PlistBuddy -c "print :file_picker" "$settingsFile")
+folder_picker=$(/usr/libexec/PlistBuddy -c "print :folder_picker" "$settingsFile")
+
+## Output some data for the dashboard
+echo "number_picker:  $number_picker"
+echo "text_field:  $text_field"
+echo "checkbox_list:  $checkbox_list"
+echo "checkbox_positive:  $checkbox_positive"
+echo "checkbox_negative:  $checkbox_negative"
+echo "username:  $username"
+echo "password:  $password"
+echo "popup:  $popup"
+echo "file_picker:  $file_picker"
+echo "folder_picker:  $folder_picker"
+
+## Exit something to tell the dashboard what to do
+exit 0
