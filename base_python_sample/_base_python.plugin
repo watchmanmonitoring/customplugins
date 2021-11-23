@@ -38,22 +38,28 @@ from Toolkit import Log
 
 ''' Troubleshooting and Logging
 Troubleshooting is a little bit easier when you know where to look.
+Backend logic handles where and how to write those log messages, but
+you can set some hard options:
 
-Our ClientLogging() is available through Toolkit.Log and as far as
+  Log.enabled  = True
+  Log.log_file = '/path/to/alt/file.log'
+  Log.parent   = 'GREP_ME'
+
+Our ClientLogging() is available through Toolkit.Log, and as far as
 plugins go only has one real thing to call:
 
   Log.write('Some helpful text.')
 
-Backend logic handles where and how to write those log messages, but
-you can set some hard options:
+There are currently only 2 log levels supported, INFO and ERROR.  A
+level of ERROR will tell the client to not clean up the temp paths and
+logging to leave something behind to help troubleshoot.
 
-  Log.log_file = '/path/to/alt/file.log'
-  Log.enabled  = True
+  Log.write('Oh No!', level='ERROR')
 
 The easiest way to effectively test your plugin and make use of Toolkit
-features is through our RunPlugin layer:
+features is through our --plugin layer:
 
-  sudo /Library/MonitoringClient/RunPlugin _base_python.plist
+  sudo /Library/MonitoringClient/RunClient --plugin _base_python
 '''
 Log.write('Checking settings ...')
 
@@ -63,15 +69,18 @@ timestamp or file size, or enable PrefPaneVisibility and provide some
 user-adjustable items.
 
 Toolkit.check_settings() provides an easy way to provide some defaults
-and verify existing settings.
+and verify existing settings.  You may provide a path to a settings
+file, but by default `check_settings()` will use the environment var
+$MC_PLUGIN_SETTINGS_FILE set by the logger.
 '''
-settings_file = '/Library/MonitoringClient/PluginSupport/_base_python_settings.plist'
 base_settings = {
 	'Some_Setting'       : 'default string',
 	'Other_Settings'     : 6,
 	'PrefPaneVisibility' : True
 }
-settings = Toolkit.check_settings(base_settings, settings_file)
+settings = Toolkit.check_settings(base_settings)
+#settings_file = '/Library/MonitoringClient/PluginSupport/_base_python_settings.plist'
+#settings = Toolkit.check_settings(base_settings, settings_file)
 
 ''' Plist handling
 Plists can be a pain if you're not sure what you're going to run into
