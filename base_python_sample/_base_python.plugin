@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 
 ''' Basic Plugin
 This sample will try to outline what's generally needed for a plugin,
